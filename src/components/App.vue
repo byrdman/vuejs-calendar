@@ -1,13 +1,16 @@
 <template>
     <div>
-        <div v-for="day in days">{{ day }}</div>
+        <div v-for="week in weeks">
+            Week
+            <div v-for="day in week">{{ day }}</div>
+        </div>
     </div>
 </template>
 <script>
   export default {
     data() {
       return {
-        month: 5,
+        month: 2,
         year: 2017
       };
     },
@@ -16,7 +19,7 @@
         // Generating all days in current month
         let days = [];
         let currentDay = this.$moment(`${this.year}-${this.month}-1`, 'YYYY-M-D');
-        days.push(currentDay);
+
         do {
           days.push(currentDay);
           currentDay = this.$moment(currentDay).add(1, 'days');
@@ -39,6 +42,19 @@
         }
 
         return days;
+      },
+      weeks() {
+        let weeks = [];
+        let week = [];
+
+        for (let day of this.days) {
+          week.push(day);
+          if (week.length === 7) {
+            weeks.push(week);
+            week = [];
+          }
+        }
+        return weeks;
       }
     }
   }
