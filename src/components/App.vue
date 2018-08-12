@@ -1,20 +1,43 @@
 <template>
     <div>
-        <div v-for="week in weeks">
-            Week
-            <div v-for="day in week">{{ day }}</div>
+        <div id="header">
+            <div>
+                <h1>Vue.js Calendar</h1>
+            </div>
+            <div>
+                <current-month></current-month>
+            </div>
         </div>
+        <div id="day-bar">
+            <div>Mon</div>
+            <div>Tues</div>
+            <div>Wed</div>
+            <div>Thurs</div>
+            <div>Fri</div>
+            <div>Sat</div>
+            <div>Sun</div>
+        </div>
+        <div id="calendar">
+            <div v-for="week in weeks" class="calendar-week">
+                <calendar-day v-for="day in week" :day="day"></calendar-day>
+            </div>
+        </div>
+        <event-form></event-form>
     </div>
 </template>
 <script>
+  import CalendarDay from './CalendarDay.vue';
+  import CurrentMonth from './CurrentMonth.vue';
+  import EventForm from './EventForm.vue';
+
   export default {
-    data() {
-      return {
-        month: 2,
-        year: 2017
-      };
-    },
     computed: {
+      month() {
+        return this.$store.state.currentMonth;
+      },
+      year() {
+        return this.$store.state.currentYear;
+      },
       days() {
         // Generating all days in current month
         let days = [];
@@ -23,7 +46,7 @@
         do {
           days.push(currentDay);
           currentDay = this.$moment(currentDay).add(1, 'days');
-        } while ((currentDay.month()+1) === this.month);
+        } while ((currentDay.month() + 1) === this.month);
 
         // add previous days to start
         const SUNDAY = 0;
@@ -32,10 +55,11 @@
         while (currentDay.day() !== MONDAY) {
           currentDay = this.$moment(currentDay).subtract(1, 'days');
           days.unshift(currentDay);
-        };
+        }
+        ;
 
         // add extra days to end
-        currentDay = this.$moment(days[days.length-1]);
+        currentDay = this.$moment(days[days.length - 1]);
         while (currentDay.day() !== SUNDAY) {
           currentDay = this.$moment(currentDay).add(1, 'days');
           days.push(currentDay);
@@ -56,6 +80,11 @@
         }
         return weeks;
       }
+    },
+    components: {
+      CalendarDay,
+      CurrentMonth,
+      EventForm
     }
   }
 </script>
